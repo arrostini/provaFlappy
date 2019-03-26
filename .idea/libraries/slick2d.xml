@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="slick2d">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/slick2d" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/slick2d" recursive="false" />
+  </library>
+</component>
