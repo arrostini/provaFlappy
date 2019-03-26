@@ -9,6 +9,8 @@ import stati.GameOver;
 import stati.MainGame;
 import stati.StartMenu;
 
+import java.io.File;
+
 public class GiocoAStati extends StateBasedGame {
 
     private static final int STARTMENU = 0;
@@ -20,13 +22,14 @@ public class GiocoAStati extends StateBasedGame {
     }
 
     @Override
-    public void initStatesList(GameContainer gameContainer) throws SlickException {
+    public void initStatesList(GameContainer gameContainer)  {
         this.addState(new StartMenu());
         this.addState(new MainGame());
         this.addState(new GameOver());
     }
 
     public static void main(String[] argv) {
+
         try {
             AppGameContainer container = new AppGameContainer(new GiocoAStati());
             container.setTargetFrameRate(250);
