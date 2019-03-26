@@ -82,13 +82,4 @@ public class FlappyGame  extends BasicGame {
             e.printStackTrace();
         }
     }
-
-    public void keyPressed(int key, char c){
-        if (key== Input.KEY_SPACE){
-            bird.jump();
-        }
-        if (key== Input.KEY_LCONTROL){
-            enemyBird.jump();
-        }
-    }
 }*/
