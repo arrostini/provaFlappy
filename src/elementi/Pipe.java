@@ -12,6 +12,7 @@ public class Pipe implements DrawableElement, SolidElement {
     private Image lowerImage;
     private Shape upperShape;
     private Shape lowerShape;
+    private boolean passed;
     private float x;
     private float y;
 
@@ -26,6 +27,7 @@ public class Pipe implements DrawableElement, SolidElement {
 
     public Pipe(GameContainer container, float sfasamento, float center) throws SlickException {
         this.container= container;
+        this.passed = false;
         lowerImage= new Image("res/pipe.png");
         upperImage= lowerImage.getFlippedCopy(false, true);
         width= WIDTH_PROPORION * container.getWidth();
@@ -72,5 +74,13 @@ public class Pipe implements DrawableElement, SolidElement {
 
     public float getX() {
         return x;
+    }
+
+    public boolean isPassed() {
+        return passed;
+    }
+
+    public void setPassed(boolean passed) {
+        this.passed = passed;
     }
 }

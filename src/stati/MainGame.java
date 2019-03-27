@@ -63,10 +63,14 @@ public class MainGame extends BasicGameState {
         enemyBird. update(gameContainer, i);
         for(Pipe pipe: pipes){
             pipe.update(gameContainer, i);
-            if(pipe.outOfBounds()){
+            if(pipe.getX()<bird.getX()&&!pipe.isPassed()){
                 temp_score++;
+                pipe.setPassed(true);
             }
-            if (pipe.outOfBounds()) pipe.regenerate(randomHeight());
+            if (pipe.outOfBounds()){
+                pipe.regenerate(randomHeight());
+                pipe.setPassed(false);
+            }
             if (pipe.collides(bird.getShape())){
                 collisione= true;
                 score = temp_score;
