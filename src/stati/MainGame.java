@@ -48,9 +48,9 @@ public class MainGame extends BasicGameState {
         background.draw(0,0, container.getWidth(), container.getHeight());
         bird.render(gameContainer, graphics);
         enemyBird.render(gameContainer, graphics);
-        font.drawString(200,200,String.valueOf(temp_score));
         for(Pipe pipe: pipes)
             pipe.render(gameContainer, graphics);
+        font.drawString(200,200,String.valueOf(temp_score));
         //if(collisione)
             //font.drawString( container.getWidth()/2f- font.getWidth("COLLISIONE!")/2f, container.getHeight()/10f,"COLLISIONE!");
     }
