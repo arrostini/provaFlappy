@@ -24,6 +24,8 @@ public class MainGame extends BasicGameState {
     private int score = 0;
     private int temp_score = 0;
     TrueTypeFont font;
+    private Music flap;
+    private Music gameOverTheme;
 
     @Override
     public int getID() {
@@ -41,6 +43,7 @@ public class MainGame extends BasicGameState {
         pipes.add(new Pipe(container, container.getWidth()*3f/2 + Pipe.WIDTH_PROPORION*container.getWidth()/2, container.getHeight()/2f));
         java.awt.Font font1= new java.awt.Font("Verdana", java.awt.Font.BOLD, 32);
         font= new TrueTypeFont(font1, true);
+        flap = new Music("res/flap.ogg");
     }
 
     @Override
@@ -76,6 +79,8 @@ public class MainGame extends BasicGameState {
                 score = temp_score;
                 temp_score = 0;
                 stateBasedGame.enterState(2);
+                gameOverTheme = new Music("res/gameOver.ogg");
+                gameOverTheme.play(1.0f,0.4f);
             }
         }
     }
@@ -87,6 +92,7 @@ public class MainGame extends BasicGameState {
     public void keyPressed(int key, char c){
         if (key== Input.KEY_SPACE){
             bird.jump();
+            flap.play(1.0f,1.0f);
         }
         if (key== Input.KEY_LCONTROL){
             enemyBird.jump();

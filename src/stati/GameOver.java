@@ -1,9 +1,6 @@
 package stati;
 
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.MouseOverArea;
@@ -30,7 +27,6 @@ public class GameOver extends BasicGameState implements ComponentListener {
         background= new Image("res/bg.jpeg");
         gameOver = new Image("res/gameOver.png").getScaledCopy(250, 130);
         gameOverButton = new MouseOverArea(container, gameOver, 100, 250, 250, 130, this);
-
     }
 
     @Override
@@ -48,7 +44,7 @@ public class GameOver extends BasicGameState implements ComponentListener {
     public void componentActivated(AbstractComponent source)  {
         if (source == gameOverButton ) {
             try{
-                stateBasedGame.getState(1).init(container,stateBasedGame);
+                stateBasedGame.getState(0).init(container,stateBasedGame);
             } catch (SlickException e){
                 e.printStackTrace();
             }
