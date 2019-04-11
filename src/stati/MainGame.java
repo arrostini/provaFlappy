@@ -1,31 +1,40 @@
 package stati;
 
 import elementi.Bird;
-import elementi.EnemyBird;
 import elementi.Pipe;
+import org.lwjgl.opengl.XRandR;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MainGame extends BasicGameState {
+public class MainGame extends BasicGameState  {
     public static final int ID = 1;
     private GameContainer container;
     private Bird bird;
-    private EnemyBird enemyBird;
+
     private Image background;
-    private float gameSpeed=0.7f;
+    private float gameSpeed;
     private ArrayList<Pipe> pipes;
-    private float maxH=0;
-    private float minH=8000;
-    private boolean collisione=false;
-    private int score = 0;
-    private int temp_score = 0;
-    TrueTypeFont font;
-    private Music flap;
-    private Music gameOverTheme;
+    private int score;
+    private TrueTypeFont font;
+    private double angle;
+    private Pipe lastPipe;
+    private Image prova;
+    private int updates=0;
+    private int renders=0;
+    private boolean stopRotation=false;
+    private long initTime=0;
+    private int deltaTime;
+    private boolean initialized=false;
+
+
+    private Image altroImage;
+    private Image altroImage2;
 
     @Override
     public int getID() {
@@ -36,54 +45,84 @@ public class MainGame extends BasicGameState {
     public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
         this.container= gameContainer;
         pipes= new ArrayList<>();
-        background= new Image("res/bg.jpeg");
+        background= new Image("res/cimitero.png");
         bird= new Bird(container);
-        enemyBird= new EnemyBird(container);
-        pipes.add(new Pipe(container, container.getWidth(), container.getHeight()/2f));
-        pipes.add(new Pipe(container, container.getWidth()*3f/2 + Pipe.WIDTH_PROPORION*container.getWidth()/2, container.getHeight()/2f));
+        //enemyBird= new EnemyBird(container);
+        pipes.add(new Pipe(container, container.getWidth()/2, container.getHeight()/2f));
+        pipes.add(new Pipe(container, container.getWidth()*3f/4f + Pipe.WIDTH_PROPORION*container.getWidth()/4, randomHeight()));
+        pipes.add(new Pipe(container, container.getWidth()*4f/4f + Pipe.WIDTH_PROPORION*container.getWidth()/2, randomHeight()));
+        pipes.add(new Pipe(container, container.getWidth()*5f/4f + Pipe.WIDTH_PROPORION*container.getWidth()*3f/4, randomHeight()));
+        pipes.add(lastPipe= new Pipe(container, container.getWidth()*6f/4f + Pipe.WIDTH_PROPORION*container.getWidth(), randomHeight()));
+
         java.awt.Font font1= new java.awt.Font("Verdana", java.awt.Font.BOLD, 32);
         font= new TrueTypeFont(font1, true);
-        flap = new Music("res/flap.ogg");
+        gameSpeed=0.5f;
+        score=0;
+        angle=0;
+
+        altroImage2= new Image("res/blank.png");
+        altroImage= new Image(225, 325);
     }
 
     @Override
     public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics graphics) throws SlickException {
-        background.draw(0,0, container.getWidth(), container.getHeight());
+        renders++;
+        altroImage.draw(-500, -500);
+        //graphics.rotate(gameContainer.getWidth()/2f, gameContainer.getHeight()/2f,  (float) angle);
+
+        background.draw(0,0, 2.4f*container.getWidth()/2f,container.getHeight());
         bird.render(gameContainer, graphics);
-        enemyBird.render(gameContainer, graphics);
+        //enemyBird.render(gameContainer, graphics);
         for(Pipe pipe: pipes)
             pipe.render(gameContainer, graphics);
-        font.drawString(200,200,String.valueOf(temp_score));
-        //if(collisione)
-            //font.drawString( container.getWidth()/2f- font.getWidth("COLLISIONE!")/2f, container.getHeight()/10f,"COLLISIONE!");
+        font.drawString(200,200,String.valueOf(score));
+        if (stopRotation){
+            graphics.resetTransform();
+            stopRotation=false;
+        }
+//        System.out.println("Altezza: " + altroImage.getWidth()+ " larghezza: "  + altroImage.getHeight());
+        container.getGraphics().copyArea(altroImage2, 0, 0);
+        altroImage=altroImage2.getScaledCopy(1.0f);
+        altroImage.draw( container.getWidth()/2f , 0);
+
     }
 
     @Override
     public void update(GameContainer gameContainer, StateBasedGame stateBasedGame, int i) throws SlickException {
-        collisione=false;
+        updates++;
+        if(initialized==false){
+            initTime=System.currentTimeMillis();
+            initialized=true;
+        }
+        deltaTime+=i;
+        System.out.println("Elapsed: " + (System.currentTimeMillis()-initTime) + " Delta: " + deltaTime);
+
+        System.out.println((System.currentTimeMillis()-initTime - deltaTime ));
         i*=gameSpeed;
+
         bird.update(gameContainer, i);
-        enemyBird. update(gameContainer, i);
+        //enemyBird. update(gameContainer, i);
         for(Pipe pipe: pipes){
             pipe.update(gameContainer, i);
             if(pipe.getX()<bird.getX()&&!pipe.isPassed()){
-                temp_score++;
+                score++;
                 pipe.setPassed(true);
+
             }
             if (pipe.outOfBounds()){
-                pipe.regenerate(randomHeight());
+                pipe.regenerate(randomHeight(), lastPipe.getX()+ container.getWidth()/4f + Pipe.WIDTH_PROPORION*container.getWidth()/2);
+                lastPipe= pipe;
                 pipe.setPassed(false);
+
             }
             if (pipe.collides(bird.getShape())){
-                collisione= true;
-                score = temp_score;
-                temp_score = 0;
-                stateBasedGame.enterState(2);
-                gameOverTheme = new Music("res/gameOver.ogg");
-                gameOverTheme.play(1.0f,0.4f);
+                stateBasedGame.enterState(2, new FadeOutTransition(), null);
             }
         }
+        angle+=i*0.02;
+//        System.out.println("Renders: " + renders + ", Updates: " + updates);
     }
+
 
     private float randomHeight(){
         return container.getHeight()/4f + (new Random()).nextFloat()*(container.getHeight())/2f;
@@ -92,10 +131,14 @@ public class MainGame extends BasicGameState {
     public void keyPressed(int key, char c){
         if (key== Input.KEY_SPACE){
             bird.jump();
-            flap.play(1.0f,1.0f);
         }
-        if (key== Input.KEY_LCONTROL){
+        /*if (key== Input.KEY_LCONTROL){
             enemyBird.jump();
+        }*/
+        if( key== Input.KEY_Z){
+            stopRotation=true;
+            System.err.println("PORCO");
+
         }
     }
 

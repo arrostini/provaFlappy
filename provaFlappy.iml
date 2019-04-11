@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="slick2d" level="project" />
+    <orderEntry type="library" name="gdx" level="project" />
   </component>
 </module>

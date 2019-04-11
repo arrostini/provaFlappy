@@ -18,7 +18,7 @@ public class Pipe implements DrawableElement, SolidElement {
 
     private float speed;
     private GameContainer container;
-    private static final float MAX_SPEED_PROPORTION = 0.0005f;
+    private static final float MAX_SPEED_PROPORTION = 0.00065f;
     private static final float FREE_SPACE_PROPORTION= 0.35f;
     private float width;
     private float height;
@@ -28,9 +28,9 @@ public class Pipe implements DrawableElement, SolidElement {
     public Pipe(GameContainer container, float sfasamento, float center) throws SlickException {
         this.container= container;
         this.passed = false;
-        lowerImage= new Image("res/pipe.png");
+        lowerImage= new Image("res/mattoni.png");
         upperImage= lowerImage.getFlippedCopy(false, true);
-        width= WIDTH_PROPORION * container.getWidth();
+        width= WIDTH_PROPORION * container.getWidth()/2;
         height= width* WIDTH_HEIGHT_PROPORTION;
         x=sfasamento;
         y=center;
@@ -62,14 +62,14 @@ public class Pipe implements DrawableElement, SolidElement {
     public boolean collides(Shape otherShape) {
         return upperShape.intersects(otherShape)||lowerShape.intersects(otherShape);
     }
-    public void regenerate(float y){
-        x= container.getWidth();
+    public void regenerate(float y, float x){
+        this.x= x;
         this.y=y;
         lowerShape.setY(y+0.5f*FREE_SPACE_PROPORTION*container.getHeight());
         upperShape.setY(y-height-0.5f*FREE_SPACE_PROPORTION*container.getHeight());
     }
     public boolean outOfBounds(){
-        return x+width<0;
+        return x+width<-container.getWidth();
     }
 
     public float getX() {
