@@ -2,12 +2,11 @@ package stati;
 
 import elementi.Bird;
 import elementi.Pipe;
-import org.lwjgl.opengl.XRandR;
+import network.GameClient;
+import network.GameServer;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.state.transition.FadeInTransition;
-import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -33,11 +32,12 @@ public class MainGame extends BasicGameState  {
     private long initTime=0;
     private int deltaTime;
     private boolean initialized=false;
+    private GameClient socketClient;
+    private GameServer socketServer;
 
 
     private Image altroImage;
     private Image altroImage2;
-
     @Override
     public int getID() {
         return MainGame.ID;
@@ -71,6 +71,12 @@ public class MainGame extends BasicGameState  {
 
         altroImage2= new Image("res/blank.png");
         altroImage= new Image(225, 325);
+
+        socketServer = new GameServer(this);
+        socketServer.start();
+
+        socketClient = new GameClient(this,"localhost");
+        socketClient.start();
 
     }
 
@@ -130,7 +136,7 @@ public class MainGame extends BasicGameState  {
 
             }
             if (pipe.collides(bird.getShape())){
- //               stateBasedGame.enterState(2, new FadeOutTransition(), null);
+                //stateBasedGame.enterState(2, new FadeOutTransition(), null);
             }
         }
         for(Pipe pipe: pipes2){
@@ -147,7 +153,7 @@ public class MainGame extends BasicGameState  {
 
             }
             if (pipe.collides(bird2 .getShape())){
- //               stateBasedGame.enterState(2, new FadeOutTransition(), null);
+                //stateBasedGame.enterState(2, new FadeOutTransition(), null);
             }
         }
         angle+=i*0.02;
@@ -158,7 +164,9 @@ public class MainGame extends BasicGameState  {
     private float randomHeight(){
         return container.getHeight()/4f + (new Random()).nextFloat()*(container.getHeight())/2f;
     }
-
+    public void enemyJump(){
+        bird2.jump();
+    }
     public void keyPressed(int key, char c){
         if (key== Input.KEY_SPACE){
             bird.jump();
@@ -176,7 +184,7 @@ public class MainGame extends BasicGameState  {
 
         }
         if( key == Input.KEY_LCONTROL){
-            bird2.jump();
+            socketClient.sendData("jump".getBytes());
 
         }
     }
